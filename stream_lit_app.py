@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+
+import math
 from datetime import datetime, timedelta
 
 st.set_page_config(page_title="Dynamic Row Addition", layout="wide")
@@ -86,7 +87,7 @@ st.subheader("Data Quality Metrics")
 st.write(f"**Good Data %:** {100 - bad_data_percentage}%")
 st.write(f"**Number of Good Rows:** {good_rows}")
 st.write(f"**Number of Bad Rows:** {bad_rows}")
-st.write(f"**Termin Pro Woche:** {termin_pro_woche*4}")
+st.write(f"**Termin Pro monath:** {termin_pro_woche*4}")
 
 st.write(f"**Amount Paid to Employees:** €{amount_paid_to_employees:,.2f}")
 st.write(f"**Amount Earned per Contract:** €{amount_earned_per_contract:,.2f}")
@@ -100,11 +101,27 @@ start_date = datetime(2023, 1, 1)
 months = [(start_date + timedelta(days=30 * i)).strftime("%B %Y") for i in range(number_of_months)]
 quarters = [f"Q{(i // 3) + 1}" for i in range(number_of_months)]
 
+termin_pro_monat_calculated = termin_pro_woche*4
+
+termin_pro_monat = []
+for i in range(number_of_months):
+    if i < 2:
+        value = min_termin_in_start
+    else:
+        increase = (termin_pro_monat_calculated - min_termin_in_start) / (number_of_months - 2)
+        value = min_termin_in_start + increase * (i - 1)
+
+    # Apply rounding logic
+    if value - int(value) > 0.5:
+        termin_pro_monat.append(math.ceil(value))
+    else:
+        termin_pro_monat.append(math.floor(value))
+
 # Create the table data
 table_data = {
     "Month": months,
     "Quarter": quarters,
-    "Termin Pro Woche": [termin_pro_woche] * number_of_months,
+    "Termin Pro monat": termin_pro_monat,
     "FTE": [amount_paid_to_employees * i for i in range(1,number_of_months+1)],
     "Cum Auftrage": [amount_earned_per_contract * i for i in range(1,number_of_months+1)]
 }
