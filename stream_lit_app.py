@@ -58,8 +58,8 @@ with metric_col1:
 
 with metric_col2:
     st.write(f"**Geplannte Termin pro Woche bezogen auf Good Data:** {termin_possible_data}")
-    st.write(f"**Sales per week:** {math.floor(termin_pro_woche * (conversion_rate_zu_verkauf / 100))}")
-    st.write(f"**Sales per Month:** {math.floor(termin_pro_woche * 4 * (conversion_rate_zu_verkauf/100))}")
+    st.write(f"**Termin zu sales pro week:** {math.floor(termin_pro_woche * (conversion_rate_zu_verkauf / 100))}")
+    st.write(f"**Termin zu sales pro monat:** {math.floor(termin_pro_woche * 4 * (conversion_rate_zu_verkauf/100))}")
 
 
 # Generate months and quarters dynamically
@@ -118,13 +118,13 @@ fig.add_trace(go.Scatter(
     x=df["Month"],
     y=df["Cumulative Auftrage"],
     mode='lines',
-    name='Cumulative Auftrage',
+    name='Cumulative Aufträge',
     line=dict(color='green')
 ))
 
 # Update layout for a single y-axis
 fig.update_layout(
-    title="Line Chart with Shared X-Axis",
+    title="FTE Vs Aufträge",
     xaxis=dict(title="Month"),
     yaxis=dict(title="Values"),
     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
