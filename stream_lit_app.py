@@ -58,7 +58,7 @@ with col4:
         "Earned/Contract (in €):",
         min_value=0.0,
         step=1.0,
-        value=3200.0,
+        value=800.0,
         format="%.2f"
     )
 
@@ -123,11 +123,49 @@ table_data = {
     "Quarter": quarters,
     "Termin Pro monat": termin_pro_monat,
     "FTE": [amount_paid_to_employees * i for i in range(1,number_of_months+1)],
-    "Cum Auftrage": [amount_earned_per_contract * i for i in range(1,number_of_months+1)]
+    "Auftrage from all kunde": [amount_earned_per_contract * i for i in termin_pro_monat]
 }
 
 # Create a DataFrame
 df = pd.DataFrame(table_data)
 
+df["Cumulative Auftrage"] = df["Auftrage from all kunde"].cumsum()
+
 # Display the DataFrame in Streamlit
 st.dataframe(df)
+
+
+import plotly.graph_objects as go
+
+# Create a single y-axis line chart
+fig = go.Figure()
+
+# Add the FTE line
+fig.add_trace(go.Scatter(
+    x=df["Month"],
+    y=df["FTE"],
+    mode='lines',
+    name='FTE'
+))
+
+# Add the Cumulative Auftrage line
+fig.add_trace(go.Scatter(
+    x=df["Month"],
+    y=df["Cumulative Auftrage"],
+    mode='lines',
+    name='Cumulative Auftrage'
+))
+
+# Update layout for a single y-axis
+fig.update_layout(
+    title="Line Chart with Shared X-Axis",
+    xaxis=dict(title="Month"),
+    yaxis=dict(title="Values"),
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+)
+
+# Display the chart in Streamlit
+st.plotly_chart(fig)
+
+
+
